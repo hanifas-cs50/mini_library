@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+:root {
+  --background: #eeeeee;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-poppins: var(--font-poppins);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-poppins), Helvetica, sans-serif;
+}
+
+.full-container {
+  @apply h-full max-w-screen-xl mx-auto p-8 flex flex-col
+}
+
+.blue-button {
+  @apply px-3 py-2 rounded text-white bg-blue-500/80 hover:bg-blue-500
+}
+
+.auth-form {
+  @apply w-full max-w-sm mx-auto p-6 space-y-4 rounded bg-white shadow
+}
+
+.input-group {
+  @apply grid gap-2
+}
+
+.label {
+  @apply font-bold text-sm
+}
+
+.input {
+  @apply px-3 py-2 border-2 border-white hover:border-gray-300 focus:border-gray-500 rounded bg-gray-100 outline-0
+}
