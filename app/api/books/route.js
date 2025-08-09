@@ -1,6 +1,6 @@
 import { db } from "@/lib";
 import { books } from "@/lib/schema";
-import { like, or } from "drizzle-orm";
+import { and, isNull, like, or, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 const searchFieldMap = {
@@ -18,14 +18,19 @@ export async function GET(req) {
   const offset = (page - 1) * limit;
 
   let condition = undefined;
+
   if (search) {
-    condition = like(searchFieldMap[type], `%${search}%`);
-  } else {
-    const conditions = Object.values(searchFieldMap).map((item) => {
-      return like(item, `%${search}%`);
-    });
-    condition = or(...conditions);
+    if (type && searchFieldMap[type]) {
+      condition = like(searchFieldMap[type], `%${search}%`);
+    } else {
+      const conditions = Object.values(searchFieldMap).map((item) => {
+        return like(item, `%${search}%`);
+      });
+      condition = or(...conditions);
+    }
   }
+
+  condition = and(condition, isNull(books.deleted_at));
 
   const rows = await db
     .select()
@@ -35,16 +40,19 @@ export async function GET(req) {
     .offset(offset);
 
   const [{ count }] = await db
-    .select({ count: sql < number > `count(*)` })
+    .select({ count: sql`count(*)` })
     .from(books)
     .where(condition || sql`1=1`);
 
-  return NextResponse.json({
-    data: rows,
-    total: count,
-    page,
-    totalPages: Math.ceil(count / limit),
-  }, { status: 200 });
+  return NextResponse.json(
+    {
+      data: rows,
+      total: count,
+      page,
+      totalPages: Math.ceil(count / limit),
+    },
+    { status: 200 }
+  );
 }
 
 export async function POST(req) {
@@ -52,9 +60,19 @@ export async function POST(req) {
   const { title, author, qty } = body;
 
   if (!title || !author || !qty) {
-    return NextResponse.json({ error: "book title, author, and quantity are required" }, { status: 400 })
+    return NextResponse.json(
+      { error: "book title, author, and quantity are required" },
+      { status: 400 }
+    );
   }
 
-  const result = db.insert(books).values({ title, author, available_qty: parseInt(qty, 10) }).run();
-  return NextResponse.json({ id: result.lastInsertRowid, title, author, available_qty: qty }, { status: 201 });
+  const result = db
+    .insert(books)
+    .values({ title, author, available_qty: parseInt(qty, 10) })
+    .run();
+
+  return NextResponse.json(
+    { id: result.lastInsertRowid, title, author, available_qty: qty },
+    { status: 201 }
+  );
 }
