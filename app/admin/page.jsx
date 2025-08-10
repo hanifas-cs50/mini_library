@@ -1,13 +1,17 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import Books from "@/components/elements/admin/books/Books";
 import Borrow from "@/components/elements/admin/books/Borrow";
 import Users from "@/components/elements/admin/users/Users";
 import Overview from "@/components/ui/admin/Overview";
 import Link from "next/link";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerSession(authOptions);
+
   return (
     <section className="full-container gap-12 rounded bg-white shadow">
-      <h1 className="font-medium text-center text-2xl">Welcome, [Admin Username]</h1>
+      <h1 className="font-medium text-center text-2xl">Welcome, {session.user?.name}</h1>
 
       <Overview />
 

@@ -19,7 +19,7 @@ export async function GET(req) {
   const offset = (page - 1) * limit;
 
   let condition = undefined;
-  
+
   if (search) {
     if (type && searchFieldMap[type]) {
       condition = like(searchFieldMap[type], `%${search}%`);
@@ -34,7 +34,12 @@ export async function GET(req) {
   condition = and(condition, isNull(users.deleted_at));
 
   const rows = await db
-    .select()
+    .select({
+      id: users.id,
+      name: users.name,
+      username: users.username,
+      role: users.role,
+    })
     .from(users)
     .where(condition || sql`1=1`)
     .limit(limit)
@@ -75,7 +80,8 @@ export async function POST(req) {
       .insert(users)
       .values({ name, username, password: hashed })
       .run();
-  
+    // , role: "admin"
+
     return NextResponse.json({ name, username }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error }, { status: 400 });

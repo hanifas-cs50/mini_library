@@ -34,6 +34,23 @@ export default function Page() {
           User Preview
         </Link>
       </p>
+      
+      {/* <p className="font-medium text-xs">
+        API Preview?{" "}
+        <Link
+          className="text-blue-500/80 hover:text-blue-500 hover:underline transition-all"
+          href="/api/users"
+        >
+          Users API
+        </Link>
+        {" or "}
+        <Link
+          className="text-blue-500/80 hover:text-blue-500 hover:underline transition-all"
+          href="/api/books"
+        >
+          Books API
+        </Link>
+      </p> */}
     </main>
   );
 }
