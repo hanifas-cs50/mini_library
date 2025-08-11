@@ -1,4 +1,4 @@
-import Signup from "@/components/elements/auth/Signup";
+import Signup from "@/components/pages/auth/Signup";
 import Link from "next/link";
 
 export default function Page() {

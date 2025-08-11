@@ -1,4 +1,4 @@
-import Books from "@/components/elements/admin/books/Books";
+import Books from "@/components/pages/admin/books/Books";
 
 export default function Page() {
   return (

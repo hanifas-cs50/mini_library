@@ -1,9 +1,9 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import Books from "@/components/elements/admin/books/Books";
-import Borrow from "@/components/elements/admin/books/Borrow";
-import Users from "@/components/elements/admin/users/Users";
-import Overview from "@/components/ui/admin/Overview";
+import Books from "@/components/pages/admin/books/Books";
+import Borrow from "@/components/pages/admin/books/Borrow";
+import Users from "@/components/pages/admin/users/Users";
+import Overview from "@/components/elements/admin/Overview";
 import Link from "next/link";
 
 export default async function Page() {

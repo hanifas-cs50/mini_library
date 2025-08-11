@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 const searchFieldMap = {
   name: users.name,
   username: users.username,
+  role: users.role,
 };
 
 export async function GET(req) {

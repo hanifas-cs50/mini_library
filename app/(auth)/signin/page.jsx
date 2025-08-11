@@ -1,4 +1,4 @@
-import Signin from "@/components/elements/auth/Signin";
+import Signin from "@/components/pages/auth/Signin";
 import Link from "next/link";
 
 export default function Page() {

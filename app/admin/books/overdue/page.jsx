@@ -1,4 +1,4 @@
-import Borrow from "@/components/elements/admin/books/Borrow";
+import Borrow from "@/components/pages/admin/books/Borrow";
 
 export default function Page() {
   return (

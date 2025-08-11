@@ -2,9 +2,15 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Pagination from "@/components/elements/admin/Pagination";
 
 export default function Books({ dashboard = false }) {
   const [books, setBooks] = useState([]);
+  const [type, setType] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const limit = dashboard ? 5 : 10;
 
   useEffect(() => {
     const allBooks = [
