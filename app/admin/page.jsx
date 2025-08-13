@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import Books from "@/components/pages/admin/books/Books";
-import Borrow from "@/components/pages/admin/books/Borrow";
+import Borrow from "@/components/pages/admin/borrow/Borrow";
 import Users from "@/components/pages/admin/users/Users";
 import Overview from "@/components/elements/admin/Overview";
 import Link from "next/link";
@@ -15,7 +15,7 @@ export default async function Page() {
 
       <Overview />
 
-      <div className="grid grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <Link href="/admin/users">
           <h3 className="mb-2 font-medium text-center text-lg">Users List</h3>
           <Users dashboard={true} />

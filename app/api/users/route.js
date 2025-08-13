@@ -12,27 +12,24 @@ const searchFieldMap = {
 
 export async function GET(req) {
   const { searchParams } = new URL(req.url);
-
   const type = searchParams.get("type") || "";
   const search = searchParams.get("search") || "";
   const page = parseInt(searchParams.get("page") || "1", 10);
   const limit = parseInt(searchParams.get("limit") || "20", 10);
   const offset = (page - 1) * limit;
 
-  let condition = undefined;
+  let condition = isNull(users.deleted_at);
 
   if (search) {
     if (type && searchFieldMap[type]) {
-      condition = like(searchFieldMap[type], `%${search}%`);
+      condition = and(condition, like(searchFieldMap[type], `%${search}%`));
     } else {
-      const conditions = Object.values(searchFieldMap).map((item) => {
-        return like(item, `%${search}%`);
-      });
-      condition = or(...conditions);
+      const conditions = Object.values(searchFieldMap).map((field) =>
+        like(field, `%${search}%`)
+      );
+      condition = and(condition, or(...conditions));
     }
   }
-
-  condition = and(condition, isNull(users.deleted_at));
 
   const rows = await db
     .select({
@@ -42,49 +39,47 @@ export async function GET(req) {
       role: users.role,
     })
     .from(users)
-    .where(condition || sql`1=1`)
+    .where(condition)
     .limit(limit)
     .offset(offset);
 
   const [{ count }] = await db
     .select({ count: sql`count(*)` })
     .from(users)
-    .where(condition || sql`1=1`);
+    .where(condition);
 
-  return NextResponse.json(
-    {
-      data: rows,
-      total: count,
-      page,
-      totalPages: Math.ceil(count / limit),
-    },
-    { status: 200 }
-  );
+  return NextResponse.json({
+    data: rows,
+    total: count,
+    page,
+    totalPages: Math.ceil(count / limit),
+  });
 }
 
 export async function POST(req) {
-  const body = await req.json();
-  const { name, username, password } = body;
+  const { name, username, password } = await req.json();
 
   if (!name || !username || !password) {
     return NextResponse.json(
-      { error: "full name, username, and password are required" },
+      { error: "Full name, username, and password are required" },
       { status: 400 }
     );
   }
 
   const hashed = await bcrypt.hash(password, 10);
-  console.log(`Hashed Password: ${hashed}`);
 
   try {
-    const result = db
+    const result = await db
       .insert(users)
       .values({ name, username, password: hashed })
       .run();
     // , role: "admin"
 
-    return NextResponse.json({ name, username }, { status: 201 });
+    return NextResponse.json(
+      { id: result.lastInsertRowid, name, username },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ error }, { status: 400 });
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }

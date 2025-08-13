@@ -27,6 +27,22 @@ export default function Users({ dashboard = false }) {
     }
   }
 
+  async function handleDelete(id) {
+    try {
+      const response = await fetch(`/api/books/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch book");
+
+      const result = await response.json();
+      console.log(result);
+      await getBooks();
+    } catch (error) {
+      console.error(`Error: ${error.message}`);
+    }
+  }
+
   async function handleSearch() {
     setSearch(search.toLowerCase());
     await getUsers();
@@ -38,39 +54,35 @@ export default function Users({ dashboard = false }) {
 
   return (
     <>
-      <div className="flex items-stretch justify-between">
-        <div className="flex items-stretch">
-          <input
-            name="search"
-            className="px-3 py-2 border-2 border-gray-300 bg-white focus:border-green-500 text-sm outline-none"
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <select
-            className="pr-2 py-2 border-y-2 border-gray-300 text-sm bg-white outline-none"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
-          >
-            <option value="" disabled>
-              Type
-            </option>
-            <option value="name">Name</option>
-            <option value="username">Username</option>
-          </select>
-          <input
-            type="submit"
-            value="Search"
-            className="px-3 py-2 text-white bg-green-600/80 hover:bg-green-600 border border-green-600 rounded-r-md text-sm font-medium cursor-pointer transition-colors"
-            onClick={() => handleSearch()}
-          />
-        </div>
-
-        {/* <button type="button" className="px-3 py-2 font-medium text-sm text-white rounded bg-blue-500/80 hover:bg-blue-500 cursor-pointer transition-colors">
-          Add &#43;
-        </button> */}
-      </div>
-
+      {!dashboard && (
+        <div className="w-full flex items-stretch">
+            <input
+              name="search"
+              className="w-full px-3 py-2 border-2 border-gray-300 bg-white focus:border-green-500 rounded-l text-sm outline-none"
+              placeholder="Search..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <select
+              className="pr-2 py-2 border-y-2 border-gray-300 text-sm bg-white outline-none"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="" disabled>
+                Type
+              </option>
+              <option value="name">Name</option>
+              <option value="username">Username</option>
+              <option value="role">Role</option>
+            </select>
+            <input
+              type="submit"
+              value="Search"
+              className="px-3 py-2 text-white bg-green-600/80 hover:bg-green-600 border border-green-600 rounded-r text-sm font-medium cursor-pointer transition-colors"
+              onClick={() => handleSearch()}
+            />
+          </div>
+      )}
       <table className="min-w-full divide-y divide-gray-400 border border-gray-500">
         <thead className="bg-gray-200">
           <tr>
@@ -101,16 +113,10 @@ export default function Users({ dashboard = false }) {
                   <div className="h-full w-full flex justify-stretch">
                     <Link
                       className="w-full flex items-center justify-center text-sm text-white bg-blue-500/80 hover:bg-blue-500"
-                      href={`/admin/books/${i}`}
+                      href={`/admin/users/${user.id}`}
                     >
                       Edit
                     </Link>
-                    <button
-                      className="w-full text-sm text-white bg-red-500/80 hover:bg-red-500 cursor-pointer"
-                      type="button"
-                    >
-                      Delete
-                    </button>
                   </div>
                 </td>
               )}
@@ -128,4 +134,14 @@ export default function Users({ dashboard = false }) {
       )}
     </>
   );
+}
+
+{
+  /* <button
+      className="w-full text-sm text-white bg-red-500/80 hover:bg-red-500 cursor-pointer"
+      type="button"
+      onClick={() => handleDelete(user.id)}
+    >
+      Delete
+    </button> */
 }

@@ -7,8 +7,8 @@ const diffTime = new Date();
 diffTime.setDate(diffTime.getDate() - 7);
 
 const searchFieldMap = {
-  user_id: borrow_log.user_id,
-  book_id: borrow_log.book_id,
+  title: books.title,
+  username: users.username,
 };
 
 export async function GET(req) {
